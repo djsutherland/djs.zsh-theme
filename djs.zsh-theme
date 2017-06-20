@@ -64,11 +64,6 @@ zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:*' check-for-changes true
 zstyle ':vcs_info:git*' formats "%{$fg[yellow]%}%b%{$reset_color%}%m%u%c%{$reset_color%} "
 zstyle ':vcs_info:git*' actions "%{$fg[yellow]%}%b%{$reset_color%}%m%u%c%{$reset_color%} (%a) "
-function my_git_prompt_info {
-    if [[ $vcs_info_msg_0_ ]]; then
-        echo -n "$vcs_info_msg_0_ "
-    fi
-}
 
 # Show return code if last command failed; based on dieter.zsh-theme
 retcode_enabled="%(?.. %{$fg_bold[red]%}%?)"
