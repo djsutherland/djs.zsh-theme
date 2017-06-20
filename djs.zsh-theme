@@ -7,7 +7,7 @@ function christmas-tree () {
     fi
 }
 
-if [[ -n "$EXPECTED_USER" && $USER != $EXPECTED_USER ]]; then
+if [[ -z "$EXPECTED_USER" || $USER != $EXPECTED_USER ]]; then
 	userhost="%(!.%{$fg_bold[red]%}.%{$fg_bold[green]%})%n@%m"
 else
 	userhost="%{$fg_bold[green]%}%m"
