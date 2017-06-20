@@ -7,20 +7,18 @@ function christmas-tree () {
     fi
 }
 
-PROMPT='%{$fg_bold[blue]%}%~%(!.%{$fg[red]%}#%{$reset_color%}.%{$reset_color%}$(christmas-tree)) '
-
-if [[ -n "$EXPECTED_USER" && $USER == $EXPECTED_USER ]]; then
+if [[ -n "$EXPECTED_USER" && $USER != $EXPECTED_USER ]]; then
 	userhost="%(!.%{$fg_bold[red]%}.%{$fg_bold[green]%})%n@%m"
-else;
+else
 	userhost="%{$fg_bold[green]%}%m"
 fi
-
 
 if [[ -n "$SHOW_BATTERY" ]]; then
     # TODO: color the hostname instead of the time?
     function battery_color {
         # argument: battery percent, 0 to 100
         # spit out the appropriate color
+        # not sure why $fg doesn't work here...
         if [ $1 -ge 60 ]; then
             echo '%{[32m%}' # green
         elif [ $1 -ge 30 ]; then
@@ -30,24 +28,25 @@ if [[ -n "$SHOW_BATTERY" ]]; then
         fi
     }
 
-    if [[ "$OSTYPE" = darwin* ]]; then
-        function battery_charge {
-            # get the relevant numbers
-            res=$(ioreg -rc AppleSmartBattery | egrep '(MaxCapacity|CurrentCapacity)')
-            max=$(echo $res | grep Max | egrep -o '[[:digit:]]+')
-            curr=$(echo $res | grep Current | egrep -o '[[:digit:]]+')
+    if [[ $OSTYPE == darwin* ]]; then
+    	function battery_charge {
+    		# get the relevant numbers
+    		res=$(ioreg -rc AppleSmartBattery | egrep '(MaxCapacity|CurrentCapacity)')
+    		max=$(echo $res | grep Max | egrep -o '[[:digit:]]+')
+    		curr=$(echo $res | grep Current | egrep -o '[[:digit:]]+')
 
-            # divide
-            portion=`echo "100 * $curr / $max" | bc` # no -l, so int division
+    		# divide
+    		portion=`echo "100 * $curr / $max" | bc` # no -l, so int division
 
             battery_color $portion
-        }
+    	}
     else
         function battery_charge {
             res=$(acpi | grep -Po '\d+(?=%)')
             battery_color $res
         }
     fi
+
     local time_color='$(battery_charge)'
 else
     local time_color='%{$fg[magenta]%}'
@@ -55,29 +54,27 @@ fi
 
 local time_str='%D{%L:%M%p}'
 
+
+autoload -Uz add-zsh-hook
+autoload -Uz vcs_info
+autoload -Uz colors && colors
+add-zsh-hook precmd vcs_info
+
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:git*' formats "%{$fg[yellow]%}%b%{$reset_color%}%m%u%c%{$reset_color%} "
+zstyle ':vcs_info:git*' actions "%{$fg[yellow]%}%b%{$reset_color%}%m%u%c%{$reset_color%} (%a) "
+function my_git_prompt_info {
+    if [[ $vcs_info_msg_0_ ]]; then
+        echo -n "$vcs_info_msg_0_ "
+    fi
+}
+
+# Show return code if last command failed; based on dieter.zsh-theme
 retcode_enabled="%(?.. %{$fg_bold[red]%}%?)"
 retcode_disabled=''
 retcode=$retcode_enabled
 
-ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[yellow]%}"
-ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%} "
-ZSH_THEME_GIT_PROMPT_CLEAN=""
-ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[red]%}*"
-function my_git_prompt_info {
-    if [[ -n $FORCE_GIT_IN_PROMPT ]]; then
-        git_prompt_info
-    elif if [[ -z $NO_GIT_IN_PROMPT ]]; then
-        fs=$(df -P $PWD | tail -1 | cut -d' ' -f1)
-        if [[ ( "$fs" != "AFS" ) ]]; then
-            git_prompt_info
-        fi
-    fi
-}
-
-RPROMPT='[$(my_git_prompt_info)$(anaconda_prompt_info)'$userhost' '$time_color$time_str'${retcode}%{$reset_color%}]'
-
-
-# taken from dieter.zsh-theme
 function accept-line-or-clear-warning () {
 	if [[ -z $BUFFER ]]; then
 		retcode=$retcode_disabled
@@ -88,3 +85,7 @@ function accept-line-or-clear-warning () {
 }
 zle -N accept-line-or-clear-warning
 bindkey '^M' accept-line-or-clear-warning
+
+
+PROMPT='%{$fg_bold[blue]%}%~%(!.%{$fg[red]%}#%{$reset_color%}.%{$reset_color%}$(christmas-tree)) '
+RPROMPT='[$vcs_info_msg_0_$(anaconda_prompt_info)'$userhost' '$time_color$time_str'${retcode}%{$reset_color%}]'
