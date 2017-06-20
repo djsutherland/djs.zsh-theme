@@ -7,10 +7,16 @@ function christmas-tree () {
     fi
 }
 
-if [[ -z "$EXPECTED_USER" || $USER != $EXPECTED_USER ]]; then
-	userhost="%(!.%{$fg_bold[red]%}.%{$fg_bold[green]%})%n@%m"
+if (( $+commands[scutil] )); then
+    host=$(scutil --get LocalHostName)
 else
-	userhost="%{$fg_bold[green]%}%m"
+    host="%m"
+fi
+
+if [[ -z "$EXPECTED_USER" || $USER != $EXPECTED_USER ]]; then
+	userhost="%(!.%{$fg_bold[red]%}.%{$fg_bold[green]%})%n@$host"
+else
+	userhost="%{$fg_bold[green]%}$host"
 fi
 
 if [[ -n "$SHOW_BATTERY" ]]; then
