@@ -58,7 +58,7 @@ else
     local time_color='%{$fg[magenta]%}'
 fi
 
-local time_str='%D{%L:%M%p}'
+local time_str='%D{%K:%M}'
 
 
 autoload -Uz add-zsh-hook
