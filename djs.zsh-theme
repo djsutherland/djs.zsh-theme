@@ -1,7 +1,7 @@
 function christmas-tree () {
     d=$(date '+%m %d' | sed 's/^ *//; s/^0//; s/ /./'); # eg '12.01' or '01.03'
     if [[ $d -ge 12.10 && $d -le 12.25 ]]; then
-        echo -e '\U0001F384 '
+        echo "%2{"$'\U0001F384 '"%}"
     else
         echo -e '$'
     fi
