@@ -89,7 +89,14 @@ bindkey '^M' accept-line-or-clear-warning
 
 function anaconda_prompt_info() {
     if [[ -n $CONDA_DEFAULT_ENV ]]; then
-        echo "%{$fg[cyan]%}$CONDA_DEFAULT_ENV "
+        echo -n "%{$fg[cyan]%}$CONDA_DEFAULT_ENV"
+        if [[ $CONDA_SHLVL -gt 1 ]]; then
+            local _extra
+            (( _extra = $CONDA_SHLVL - 1 ))
+            echo "%{$fg[red]%}(+${_extra}) "
+        else
+            echo " "
+        fi
     fi
 }
 
