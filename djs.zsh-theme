@@ -87,6 +87,12 @@ function accept-line-or-clear-warning () {
 zle -N accept-line-or-clear-warning
 bindkey '^M' accept-line-or-clear-warning
 
+function anaconda_prompt_info() {
+    if [[ -n $CONDA_DEFAULT_ENV ]]; then
+        echo "%{$fg[cyan]%}$CONDA_DEFAULT_ENV "
+    fi
+}
+
 
 PROMPT='%{$fg_bold[blue]%}%~%(!.%{$fg[red]%}#%{$reset_color%}.%{$reset_color%}$(christmas-tree)) '
 RPROMPT='[$vcs_info_msg_0_$(anaconda_prompt_info)'$userhost' '$time_color$time_str'${retcode}%{$reset_color%}]'
