@@ -1,3 +1,10 @@
+autoload -Uz add-zsh-hook
+autoload -Uz colors && colors
+
+FILENAME=${(%):-%x} # https://stackoverflow.com/a/28336473
+DIRNAME=$FILENAME:a:h  # a = absolute, h = dirname (???)
+
+
 function christmas-tree () {
     d=$(date '+%m %d' | sed 's/^ *//; s/^0//; s/ /./'); # eg '12.01' or '01.03'
     if [[ $d -ge 12.10 && $d -le 12.25 ]]; then
@@ -61,15 +68,23 @@ fi
 local time_str='%D{%K:%M}'
 
 
-autoload -Uz add-zsh-hook
-autoload -Uz vcs_info
-autoload -Uz colors && colors
-add-zsh-hook precmd vcs_info
+# Use standard vcs_info, but in a zsh-async wrapper.
+# Assumes zsh-async is sourced already; https://github.com/mafredri/zsh-async
+# Have to (I think?) call separate git-info script, unfortunately...
+vcs_info_msg_0_=""
+function git_callback {
+    vcs_info_msg_0_=$3
+    zle && zle reset-prompt
+}
+function launch_async_vcs_info {
+    vcs_info_msg_0_=""  # avoid leaving old info...
+    async_job git_prompt_worker "$DIRNAME/git-script" "$PWD"
+}
+async_init
+async_start_worker git_prompt_worker
+async_register_callback git_prompt_worker git_callback
+add-zsh-hook precmd launch_async_vcs_info
 
-zstyle ':vcs_info:*' enable git
-zstyle ':vcs_info:*' check-for-changes true
-zstyle ':vcs_info:git*' formats "%{$fg[yellow]%}%b%{$reset_color%}%m%u%c%{$reset_color%} "
-zstyle ':vcs_info:git*' actions "%{$fg[yellow]%}%b%{$reset_color%}%m%u%c%{$reset_color%} (%a) "
 
 # Show return code if last command failed; based on dieter.zsh-theme
 retcode_enabled="%(?.. %{$fg_bold[red]%}%?)"
