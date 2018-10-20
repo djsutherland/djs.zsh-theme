@@ -1,15 +1,10 @@
 #!/usr/bin/env zsh
 
+_filename=${(%):-%x} # https://stackoverflow.com/a/28336473
+_dirname=$_filename:h  # h = dirname (???)
+source "$_dirname/git-format.zsh"
+
 cd $1
-
-autoload -Uz add-zsh-hook
-autoload -Uz vcs_info
-autoload -Uz colors && colors
-
-zstyle ':vcs_info:*' enable git
-zstyle ':vcs_info:*' check-for-changes true
-zstyle ':vcs_info:git*' formats "%{$fg[yellow]%}%b%{$reset_color%}%m%u%c%{$reset_color%} "
-zstyle ':vcs_info:git*' actions "%{$fg[yellow]%}%b%{$reset_color%}%m%u%c%{$reset_color%} (%a) "
 
 vcs_info
 echo $vcs_info_msg_0_

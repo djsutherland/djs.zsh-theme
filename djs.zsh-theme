@@ -1,8 +1,8 @@
 autoload -Uz add-zsh-hook
 autoload -Uz colors && colors
 
-FILENAME=${(%):-%x} # https://stackoverflow.com/a/28336473
-DIRNAME=$FILENAME:a:h  # a = absolute, h = dirname (???)
+_filename=${(%):-%x} # https://stackoverflow.com/a/28336473
+_dirname=$_filename:a:h  # a = absolute, h = dirname (???)
 
 
 function christmas-tree () {
@@ -60,31 +60,38 @@ if [[ -n "$SHOW_BATTERY" ]]; then
         }
     fi
 
-    local time_color='$(battery_charge)'
+    time_color='$(battery_charge)'
 else
-    local time_color='%{$fg[magenta]%}'
+    time_color='%{$fg[magenta]%}'
 fi
 
-local time_str='%D{%K:%M}'
+time_str='%D{%K:%M}'
 
 
-# Use standard vcs_info, but in a zsh-async wrapper.
+# Use standard vcs_info, but in a zsh-async wrapper,
+# if zsh version is at least 5.0.1; it seems to break in 5.0.0 anyway.
 # Assumes zsh-async is sourced already; https://github.com/mafredri/zsh-async
 # Have to (I think?) call separate git-info script, unfortunately...
-vcs_info_msg_0_=""
-function git_callback {
-    vcs_info_msg_0_=$3
-    zle && zle reset-prompt
-}
-function launch_async_vcs_info {
-    vcs_info_msg_0_=""  # avoid leaving old info...
-    async_job git_prompt_worker "$DIRNAME/git-script" "$PWD"
-}
-async_init
-async_start_worker git_prompt_worker
-async_register_callback git_prompt_worker git_callback
-add-zsh-hook precmd launch_async_vcs_info
+autoload is-at-least
+if is-at-least 5.0.1 $ZSH_VERSION; then
+    vcs_info_msg_0_=""
+    function git_callback {
+        vcs_info_msg_0_=$3
+        zle && zle reset-prompt
+    }
+    function launch_async_vcs_info {
+        vcs_info_msg_0_=""  # avoid leaving old info...
+        async_job git_prompt_worker "$_dirname/git-script" "$PWD"
+    }
 
+    async_init
+    async_start_worker git_prompt_worker
+    async_register_callback git_prompt_worker git_callback
+    add-zsh-hook precmd launch_async_vcs_info
+else;  # synchronous git prompt
+    source "$_dirname/git-format.zsh"
+    add-zsh-hook precmd vcs_info
+fi
 
 # Show return code if last command failed; based on dieter.zsh-theme
 retcode_enabled="%(?.. %{$fg_bold[red]%}%?)"
