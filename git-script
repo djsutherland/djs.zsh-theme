@@ -2,7 +2,7 @@
 
 _filename=${(%):-%x} # https://stackoverflow.com/a/28336473
 _dirname=$_filename:h  # h = dirname (???)
-source "$_dirname/git-format.zsh"
+source "$_dirname/git-format"
 
 cd $1
 

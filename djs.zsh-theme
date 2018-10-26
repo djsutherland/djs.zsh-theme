@@ -89,7 +89,7 @@ if is-at-least 5.0.1 $ZSH_VERSION; then
     async_register_callback git_prompt_worker git_callback
     add-zsh-hook precmd launch_async_vcs_info
 else;  # synchronous git prompt
-    source "$_dirname/git-format.zsh"
+    source "$_dirname/git-format"
     add-zsh-hook precmd vcs_info
 fi
 
