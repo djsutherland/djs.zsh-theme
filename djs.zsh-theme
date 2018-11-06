@@ -44,7 +44,7 @@ if [[ -n "$SHOW_BATTERY" ]]; then
     if [[ $OSTYPE == darwin* ]]; then
     	function battery_charge {
     		# get the relevant numbers
-    		res=$(ioreg -rc AppleSmartBattery | egrep '(MaxCapacity|CurrentCapacity)')
+    		res=$(ioreg -rc AppleSmartBattery | egrep '"(Max|Current)Capacity"')
     		max=$(echo $res | grep Max | egrep -o '[[:digit:]]+')
     		curr=$(echo $res | grep Current | egrep -o '[[:digit:]]+')
 
