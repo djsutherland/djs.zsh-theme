@@ -4,13 +4,18 @@ autoload -Uz colors && colors
 _filename=${(%):-%x} # https://stackoverflow.com/a/28336473
 _dirname=$_filename:a:h  # a = absolute, h = dirname (???)
 
+if [[ "$TERM" = "screen" ]]; then  # emoji act weird inside tmux/screen
+    function emoji_or_backup { echo $2; }
+elif $HOME/bin/it2check ; then
+    function emoji_or_backup { echo "$1"; }
+fi
 
-function christmas-tree () {
+function christmas-tree {
     d=$(date '+%m %d' | sed 's/^ *//; s/^0//; s/ /./'); # eg '12.01' or '01.03'
     if [[ $d -ge 12.10 && $d -le 12.25 ]]; then
-        echo "%2{"$'\U0001F384 '"%}"
+        emoji_or_backup '\U0001F384' '$'
     else
-        echo -e '$'
+        echo '$'
     fi
 }
 
