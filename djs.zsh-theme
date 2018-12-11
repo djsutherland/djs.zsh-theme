@@ -6,7 +6,7 @@ _dirname=$_filename:a:h  # a = absolute, h = dirname (???)
 
 if [[ "$TERM" = "screen" ]]; then  # emoji act weird inside tmux/screen
     function emoji_or_backup { echo $2; }
-elif $HOME/bin/it2check ; then
+else
     function emoji_or_backup { echo "$1"; }
 fi
 
