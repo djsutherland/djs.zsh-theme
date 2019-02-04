@@ -74,11 +74,11 @@ time_str='%D{%K:%M}'
 
 
 # Use standard vcs_info, but in a zsh-async wrapper,
-# if zsh version is at least 5.0.1; it seems to break in 5.0.0 anyway.
+# if zsh version is at least 5.1; it seems to break in 5.0.2 anyway.
 # Assumes zsh-async is sourced already; https://github.com/mafredri/zsh-async
 # Have to (I think?) call separate git-info script, unfortunately...
 autoload is-at-least
-if is-at-least 5.0.1 $ZSH_VERSION; then
+if is-at-least 5.1 $ZSH_VERSION; then
     vcs_info_msg_0_=""
     function git_callback {
         vcs_info_msg_0_=$3
