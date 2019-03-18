@@ -22,7 +22,7 @@ function christmas-tree {
 if (( $+commands[scutil] )); then
     host=$(scutil --get LocalHostName)
 else
-    host="%m"
+    host=$(hostname || echo "%m")
 fi
 
 if [[ -z "$EXPECTED_USER" || $USER != $EXPECTED_USER ]]; then
