@@ -86,7 +86,11 @@ if is-at-least 5.1 $ZSH_VERSION; then
     }
     function launch_async_vcs_info {
         vcs_info_msg_0_=""  # avoid leaving old info...
-        async_job git_prompt_worker "$_dirname/git-script" "$PWD"
+        if ! async_job git_prompt_worker "$_dirname/git-script" "$PWD"; then
+            # not sure why worker dies like this...
+            async_start_worker git_prompt_worker
+            async_job git_prompt_worker "$_dirname/git-script" "$PWD"
+        fi
     }
 
     async_init
