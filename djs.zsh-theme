@@ -128,5 +128,5 @@ function anaconda_prompt_info() {
 }
 
 
-PROMPT='%{$fg_bold[blue]%}%~%(!.%{$fg[red]%}#%{$reset_color%}.%{$reset_color%}$(christmas-tree)) '
-RPROMPT='[$vcs_info_msg_0_$(anaconda_prompt_info)'$userhost' '$time_color$time_str'${retcode}%{$reset_color%}]'
+PROMPT=$userhost'%{$reset_color%}:%{$fg_bold[blue]%}%~%(!.%{$fg[red]%}#%{$reset_color%}.%{$reset_color%}$(christmas-tree)) '
+RPROMPT='[$vcs_info_msg_0_$(anaconda_prompt_info)'$time_color$time_str'${retcode}%{$reset_color%}]'
