@@ -118,8 +118,17 @@ function accept-line-or-clear-warning () {
 zle -N accept-line-or-clear-warning
 bindkey '^M' accept-line-or-clear-warning
 
-function anaconda_prompt_info() {
-    if [[ -n $CONDA_DEFAULT_ENV ]]; then
+function pyenv_prompt_info() {
+    if [[ -n $VIRTUAL_ENV ]]; then
+        local env_name="${VIRTUAL_ENV:t}"
+
+        # For project-local .venv, show the project directory name instead of ".venv".
+        if [[ "$env_name" == ".venv" ]]; then
+            env_name="${VIRTUAL_ENV:h:t}"
+        fi
+        echo "%{$fg[cyan]%}${env_name} "
+
+    elif [[ -n $CONDA_DEFAULT_ENV ]]; then
         echo -n "%{$fg[cyan]%}$CONDA_DEFAULT_ENV"
         if [[ $CONDA_SHLVL -gt 1 ]]; then
             local _extra
@@ -133,4 +142,4 @@ function anaconda_prompt_info() {
 
 
 PROMPT=$userhost'%{$reset_color%}:%{$fg_bold[blue]%}%~%(!.%{$fg[red]%}#%{$reset_color%}.%{$reset_color%}$(christmas-tree)) '
-RPROMPT='[$vcs_info_msg_0_$(anaconda_prompt_info)'$time_color$time_str'${retcode}%{$reset_color%}]'
+RPROMPT='[$vcs_info_msg_0_$(pyenv_prompt_info)'$time_color$time_str'${retcode}%{$reset_color%}]'
