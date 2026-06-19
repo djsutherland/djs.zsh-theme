@@ -123,7 +123,7 @@ function pyenv_prompt_info() {
         local env_name="${VIRTUAL_ENV:t}"
 
         # For project-local .venv, show the project directory name instead of ".venv".
-        if [[ "$env_name" == ".venv" ]]; then
+        if [[ "$env_name" == ".venv" || "$env_name" == "venv" ]]; then
             env_name="${VIRTUAL_ENV:h:t}"
         fi
         echo "%{$fg[cyan]%}${env_name} "
